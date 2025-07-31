@@ -27,6 +27,10 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://admireholidays.com',
   'https://www.admireholidays.com',
+  'http://192.168.68.106:5173',
+  'http://192.168.68.114:3000',
+  'http://localhost:5173',
+  'https://admireholidays.com/'
 ];
 
 const corsOptions = {
