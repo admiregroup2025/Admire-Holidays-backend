@@ -22,23 +22,23 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use('/api/v1', testRoute);
-const corsOption = {
-  origin: [
-    'http://www.admireholidays.com',
-    'https://www.admireholidays.com',
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'http://192.168.68.114:3000',
-    'https://admire-dashboard-frontend.vercel.app',
-    'https://admin.admireholidays.com',
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-};
+ 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://admireholidays.com',
+  'https://www.admireholidays.com'
+];
 
-app.use(cors(corsOption));
-
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 connectDB();
 
 // Middleware to log requests

@@ -31,7 +31,12 @@ import {
   getCancellationPolicy,
 } from '../../controller/admin/cancellation.admin.controller.js';
 import { testimonialVideo } from '../../controller/admin/testimonialVideo.admin.controller.js';
-import { createItinerary, getAllItinerary, getItineraryById, deleteItinerary } from '../../controller/admin/itinaray.admin.controller.js';
+import {
+  createItinerary,
+  getAllItinerary,
+  getItineraryById,
+  deleteItinerary,
+} from '../../controller/admin/itinaray.admin.controller.js';
 
 import {
   heroSection,
@@ -51,6 +56,8 @@ import {
   createCity,
   getStateCity,
   getCity,
+  UpdateCity,
+  DeleteCity
 } from '../../controller/admin/cities.admin.controller.js';
 import {
   postBlog,
@@ -59,7 +66,6 @@ import {
   deleteBlog,
   getSingleBlog,
 } from '../../controller/admin/Blog.admin.controller.js';
-
 
 const adminRoute = express.Router();
 
@@ -88,14 +94,14 @@ adminRoute.post(
   uploadMedia.single('video'), // ⬅️ only expecting one uploaded video
   createItinerary
 );
-adminRoute.get('/itinerary', auth, getAllItinerary)
+adminRoute.get('/itinerary', auth, getAllItinerary);
 adminRoute.get('/itinerary/:id', auth, getItineraryById);
 adminRoute.delete('/itinerary/:id', auth, authorizeAdmin, deleteItinerary);
-adminRoute.post('/city', auth, uploadMedia.single('image'), createCity);
+adminRoute.post('/city', auth, uploadMedia.array('image'), createCity);
 adminRoute.get('/state/:destinationId', auth, getStateCity);
-
 adminRoute.get('/city/:cityId', auth, getCity);
-
+adminRoute.patch('/city/:cityId', auth, uploadMedia.array('image'), UpdateCity);
+adminRoute.delete('/city/:cityId', auth, authorizeAdmin, DeleteCity);
 
 // Terms And Conditions Section
 adminRoute.get('/tnc/:id', auth, getTNC);
@@ -122,8 +128,13 @@ adminRoute.post('/hero-section', auth, uploadMedia.single('image'), heroSection)
 
 adminRoute.get('/hero-section/:page', auth, getAllHeroVideo);
 adminRoute.patch('/hero-section/:videoId', auth, updateHeroVideo);
-adminRoute.delete('/hero-section/:videoId', auth, authorizeAdmin,uploadMedia.single('image'), deleteHeroVideo);
-
+adminRoute.delete(
+  '/hero-section/:videoId',
+  auth,
+  authorizeAdmin,
+  uploadMedia.single('image'),
+  deleteHeroVideo
+);
 
 // Leads Section
 adminRoute.get('/plan-your-journey', auth, getPlanYourJourney);
@@ -138,6 +149,5 @@ adminRoute.get('/blog', auth, getBlog);
 adminRoute.get('/blog/:blogId', auth, getSingleBlog);
 adminRoute.patch('/blog/:blogId', auth, uploadMedia.single('coverImage'), updateBlog);
 adminRoute.delete('/blog/:blogId', auth, authorizeAdmin, deleteBlog);
-
 
 export default adminRoute;

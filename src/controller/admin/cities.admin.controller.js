@@ -4,10 +4,11 @@ import { formatCountryName } from '../../utils.js';
 
 export const createCity = async (req, res) => {
   const { city_name, city_category, visibility, id } = req.body;
-  console.log(typeof(city_category));
+  console.log(typeof city_category);
 
   try {
     // 1. Validate required fields
+    console.log(city_name, city_category, visibility, id);
     if (!city_name || !city_category || !visibility || !id) {
       return res.status(400).json({ msg: 'All fields are required', success: false });
     }
@@ -33,11 +34,13 @@ export const createCity = async (req, res) => {
     }
 
     // 4. Create new city
+    const imagepath = req.files.map((file) => file.path);
+    console.log(imagepath);
     const newCity = new cityModel({
       city_name: formattedName,
       city_category: citiCategoryData,
       visibility: formatCountryName(visibility),
-      city_image: req.file?.path || '',
+      city_image: imagepath,
       state: id,
     });
 
@@ -49,7 +52,6 @@ export const createCity = async (req, res) => {
     return res.status(500).json({ msg: 'Server Error', success: false });
   }
 };
-
 
 export const getStateCity = async (req, res) => {
   const { destinationId } = req.params;
@@ -85,3 +87,60 @@ export const getCity = async (req, res) => {
     return res.status(500).json({ msg: 'Server Error', success: false });
   }
 };
+
+export const UpdateCity = async (req, res) => {
+  try {
+    const { cityId } = req.params;
+    const { city_name, city_category, visibility, id } = req.body;
+
+    const formattedName = formatCountryName(city_name);
+    const citiCategoryData = Array.isArray(city_category) ? city_category : [city_category];
+
+    const imagepath = req.files.map((file) => file.path);
+
+    const updatedCity = await cityModel.findByIdAndUpdate(
+      cityId,
+      {
+        city_name: formattedName,
+        city_category: citiCategoryData,
+        visibility: formatCountryName(visibility),
+        city_image: imagepath,
+        state: id,
+      },
+      { new: true }
+    );
+
+    if (!updatedCity) {
+      return res.status(404).json({ msg: 'City not found', success: false });
+    }
+
+    return res
+      .status(200)
+      .json({ msg: 'City updated successfully', success: true, data: updatedCity });
+  } catch (error) {
+    console.log(`Update City Error ${error}`);
+    return res.status(500).json({ msg: 'Server Error', success: false });
+  }
+};
+
+export const DeleteCity = async (req, res) => {
+  try{
+    const { cityId } = req.params;
+
+    if (!cityId) {
+      return res.status(400).json({ msg: 'City ID is required', success: false });
+    }
+
+    const deletedCity = await cityModel.findByIdAndDelete(cityId);
+
+    if (!deletedCity) {
+      return res.status(404).json({ msg: 'City not found', success: false });
+    }
+
+    return res.status(200).json({ msg: 'City deleted successfully', success: true, data: deletedCity });
+  }
+  catch(error) {
+    console.log(`Delete City Error ${error}`);
+    return res.status(500).json({ msg: 'Server Error', success: false });
+  }
+}
