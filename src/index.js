@@ -22,14 +22,14 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use('/api/v1', testRoute);
- 
+
 const allowedOrigins = [
   'http://localhost:3000',
   'https://admireholidays.com',
-  'https://www.admireholidays.com'
+  'https://www.admireholidays.com',
 ];
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -37,8 +37,13 @@ app.use(cors({
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 connectDB();
 
 // Middleware to log requests
