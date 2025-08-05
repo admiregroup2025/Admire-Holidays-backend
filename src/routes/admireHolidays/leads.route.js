@@ -31,6 +31,8 @@ leadsRoute.post('/planYourJourney', planYourJourneyValidator, validate, planYour
 leadsRoute.post('/contact', contactValidator, validate, contact);
 leadsRoute.post('/subscribe', subscribeValidator, validate, subscribe);
 leadsRoute.post('/suggestionComplain', suggestionComplainValidator, validate, suggestionComplain);
+console.log("✅ leads.route.js loaded");
+
 
 export default leadsRoute;
 

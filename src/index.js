@@ -49,6 +49,8 @@ app.use(cors(corsOptions));
 
 connectDB();
 
+console.log("✅ leadsRoute imported:", leadsRoute);
+
 // Middleware to log requests
 app.use('/api/v1/', leadsRoute);
 app.use('/api/v1/destination', destinationRoute);
