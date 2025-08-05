@@ -4,6 +4,7 @@ import uploadMedia from '../../middleware/mediaUploads.js';
 import {
   postImageGallery,
   getImageForPlace,
+  deleteImageFromGallery
 } from '../../controller/admin/imageGallery.controller.js';
 import {
   AdminUserVerify,
@@ -83,6 +84,7 @@ adminRoute.delete('/delete-user/:userId', auth, authorizeAdmin, deleteUser);
 // Image Gallery Section
 adminRoute.post('/image-Gallery', auth, uploadMedia.array('image'), postImageGallery);
 adminRoute.get('/image-Gallery/:destination_id', auth, getImageForPlace);
+adminRoute.delete('/image-Gallery/delete', auth, authorizeAdmin,deleteImageFromGallery)  
 // adminRoute.get('/image-Gallery',auth,getAllImage);
 
 // Destination Section

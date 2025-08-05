@@ -86,3 +86,34 @@ export const getImageForPlace = async (req, res) => {
 //     return res.status(500).json({ msg: 'Server Error', success: false });
 //   }
 // };
+
+// Delete image from gallery
+export const deleteImageFromGallery = async (req, res) => {
+  const { destination_id, imageId } = req.body;
+  console.log(destination_id,  image_urls);
+  console.log()
+
+  try {
+    if (!destination_id || !imageId) {
+      return res.status(400).json({ msg: 'Destination ID and Image ID are required', success: false });
+    }
+
+    const imageGallery = await imageGalleryModel.findOne({ destination_id });
+
+    if (!imageGallery) {
+      return res.status(404).json({ msg: 'Image gallery not found', success: false });
+    }
+
+    imageGallery.image = imageGallery.image.filter((img) => img !== imageId);
+    await imageGallery.save();
+
+    return res.status(200).json({
+      msg: 'Image deleted successfully from the gallery',
+      success: true,
+      imageGallery,
+    });
+  } catch (error) {
+    console.error(`Delete Image Error: ${error}`);
+    return res.status(500).json({ msg: 'Server Error', success: false });
+  }
+};

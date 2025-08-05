@@ -1,6 +1,3 @@
-
-
-
 import express from 'express';
 import { validate } from '../../middleware/validator.js'; // ✅ Use only this
 
