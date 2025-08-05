@@ -95,7 +95,7 @@ adminRoute.post(
   createItinerary
 );
 adminRoute.get('/itinerary', auth, getAllItinerary);
-adminRoute.get('/itinerary/:id', auth, getItineraryById);
+adminRoute.get('/itinerary-details/:id', auth, getItineraryById);
 adminRoute.delete('/itinerary/:id', auth, authorizeAdmin, deleteItinerary);
 adminRoute.post('/city', auth, uploadMedia.array('image'), createCity);
 adminRoute.get('/state/:destinationId', auth, getStateCity);

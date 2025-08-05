@@ -93,8 +93,21 @@ export const UpdateCity = async (req, res) => {
     const { cityId } = req.params;
     const { city_name, city_category, visibility, id } = req.body;
 
+    const existingCity = await cityModel.findById(cityId);
+    if (!existingCity) {
+      return res.status(404).json({ msg: 'City not found', success: false });
+    }
+
     const formattedName = formatCountryName(city_name);
-    const citiCategoryData = Array.isArray(city_category) ? city_category : [city_category];
+    let citiCategoryData = [];
+    if (typeof city_category === 'string') {
+      try {
+        const parsed = JSON.parse(city_category); // ✅ This will parse it to array
+        citiCategoryData = Array.isArray(parsed) ? parsed : [parsed];
+      } catch (e) {
+        citiCategoryData = [city_category];
+      }
+    }
 
     const imagepath = req.files.map((file) => file.path);
 
@@ -104,7 +117,7 @@ export const UpdateCity = async (req, res) => {
         city_name: formattedName,
         city_category: citiCategoryData,
         visibility: formatCountryName(visibility),
-        city_image: imagepath,
+        city_image: [...existingCity.city_image, ...imagepath],
         state: id,
       },
       { new: true }
@@ -124,7 +137,7 @@ export const UpdateCity = async (req, res) => {
 };
 
 export const DeleteCity = async (req, res) => {
-  try{
+  try {
     const { cityId } = req.params;
 
     if (!cityId) {
@@ -137,10 +150,11 @@ export const DeleteCity = async (req, res) => {
       return res.status(404).json({ msg: 'City not found', success: false });
     }
 
-    return res.status(200).json({ msg: 'City deleted successfully', success: true, data: deletedCity });
-  }
-  catch(error) {
+    return res
+      .status(200)
+      .json({ msg: 'City deleted successfully', success: true, data: deletedCity });
+  } catch (error) {
     console.log(`Delete City Error ${error}`);
     return res.status(500).json({ msg: 'Server Error', success: false });
   }
-}
+};

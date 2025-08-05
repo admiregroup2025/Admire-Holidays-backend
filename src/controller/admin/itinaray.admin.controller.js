@@ -129,7 +129,7 @@ export const getAllItinerary = async (req, res) => {
 export const getItineraryById = async (req, res) => {
   try {
     const {id } = req.params;
-    const itinerary = await itineraryModel.findById(itineraryId).populate('selected_destination');
+    const itinerary = await itineraryModel.findById(id).populate('selected_destination');
 
     if (!itinerary) {
       return res.status(404).json({
