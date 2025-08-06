@@ -3,11 +3,7 @@ import cors from 'cors';
 import { ENV } from './config/ENV.js';
 import connectDB from './config/db.js';
 import cookieParser from 'cookie-parser';
-
-
 import { globalErrorHandler } from './middleware/errorHandler.js';
-
-
 import leadsRoute from './routes/admireHolidays/leads.route.js';
 import destinationRoute from './routes/admireHolidays/destination.route.js';
 import blogRoute from './routes/admireHolidays/blog.route.js';
@@ -44,12 +40,13 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
-
 app.use(cors(corsOptions));
+
+
 
 connectDB();
 
-console.log("✅ leadsRoute imported:", leadsRoute);
+
 
 // Middleware to log requests
 app.use('/api/v1/', leadsRoute);
