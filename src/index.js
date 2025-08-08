@@ -46,6 +46,10 @@ app.use(cors(corsOptions));
 
 connectDB();
 
+app.get('/', (req, res) => {
+  res.json({ status: 'API is working', version: '1.0' });
+});
+
 
 
 // Middleware to log requests
