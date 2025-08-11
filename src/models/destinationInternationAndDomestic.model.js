@@ -10,6 +10,10 @@ const DestinationInternationAndDomesticSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    title_image:{
+      type: String,
+      // required: true,
+    }
   },
   { timestamps: true }
 );

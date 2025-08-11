@@ -4,7 +4,7 @@ import uploadMedia from '../../middleware/mediaUploads.js';
 import {
   postImageGallery,
   getImageForPlace,
-  deleteImageFromGallery
+  deleteImageFromGallery,
 } from '../../controller/admin/imageGallery.controller.js';
 import {
   AdminUserVerify,
@@ -20,8 +20,13 @@ import {
   getAllCustomerGalleryImages,
   deleteCustomerGalleryImage,
 } from '../../controller/admin/customerGallery.admin.controller.js';
-import { destination_Internation_Or_Domestic } from '../../controller/admin/destination.admin.controller.js';
-import { addDestination_Domestic_Internationl } from '../../controller/admin/destination.admin.controller.js';
+import {
+  destination_Internation_Or_Domestic,
+  deleteDestination_Domestic_Internationl,
+  updateDestination_Domestic_Internationl,
+  addDestination_Domestic_Internationl,
+} from '../../controller/admin/destination.admin.controller.js';
+import {} from '../../controller/admin/destination.admin.controller.js';
 import { getTNC, TNC } from '../../controller/admin/termsAndCondition.admin.controller.js';
 import {
   getPaymentMethod,
@@ -58,7 +63,7 @@ import {
   getStateCity,
   getCity,
   UpdateCity,
-  DeleteCity
+  DeleteCity,
 } from '../../controller/admin/cities.admin.controller.js';
 import {
   postBlog,
@@ -84,12 +89,24 @@ adminRoute.delete('/delete-user/:userId', auth, authorizeAdmin, deleteUser);
 // Image Gallery Section
 adminRoute.post('/image-Gallery', auth, uploadMedia.array('image'), postImageGallery);
 adminRoute.get('/image-Gallery/:destination_id', auth, getImageForPlace);
-adminRoute.delete('/image-Gallery/delete', auth, authorizeAdmin,deleteImageFromGallery)  
+adminRoute.delete('/image-Gallery/delete', auth, authorizeAdmin, deleteImageFromGallery);
 // adminRoute.get('/image-Gallery',auth,getAllImage);
 
 // Destination Section
 adminRoute.get('/destination/:type', auth, destination_Internation_Or_Domestic);
 adminRoute.post('/new-destination', auth, addDestination_Domestic_Internationl);
+adminRoute.delete(
+  '/destination/delete/:id',
+  auth,
+  authorizeAdmin,
+  deleteDestination_Domestic_Internationl
+);
+adminRoute.patch(
+  '/destination/:id',
+  auth,
+  uploadMedia.single('image'),
+  updateDestination_Domestic_Internationl
+);
 adminRoute.post(
   '/itinerary',
   auth,
