@@ -25,6 +25,7 @@ import {
   deleteDestination_Domestic_Internationl,
   updateDestination_Domestic_Internationl,
   addDestination_Domestic_Internationl,
+  getSingleDestinationBYId
 } from '../../controller/admin/destination.admin.controller.js';
 import {} from '../../controller/admin/destination.admin.controller.js';
 import { getTNC, TNC } from '../../controller/admin/termsAndCondition.admin.controller.js';
@@ -94,13 +95,14 @@ adminRoute.delete('/image-Gallery/delete', auth, authorizeAdmin, deleteImageFrom
 
 // Destination Section
 adminRoute.get('/destination/:type', auth, destination_Internation_Or_Domestic);
-adminRoute.post('/new-destination', auth, addDestination_Domestic_Internationl);
+adminRoute.post('/new-destination', auth,uploadMedia.single('image'), addDestination_Domestic_Internationl);
 adminRoute.delete(
   '/destination/delete/:id',
   auth,
   authorizeAdmin,
   deleteDestination_Domestic_Internationl
 );
+adminRoute.get('/destination/edit/:id', auth, getSingleDestinationBYId);
 adminRoute.patch(
   '/destination/:id',
   auth,
