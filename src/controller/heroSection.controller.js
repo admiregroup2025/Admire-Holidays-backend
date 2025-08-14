@@ -15,6 +15,7 @@ export const getHeroSectionVideo=async(req,res)=>{
     return res.status(200).json({msg:"Successfully fetched", success:true, publicUrl});
   }
   catch(error){
-
+     console.error("Error in getHeroSectionVideo:", error);
+     return res.status(500).json({msg:"Internal Server Error", success:false});
   }
 }

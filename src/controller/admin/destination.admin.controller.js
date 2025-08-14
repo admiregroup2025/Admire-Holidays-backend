@@ -33,15 +33,23 @@ export const destination_Internation_Or_Domestic = async (req, res) => {
 
 //Adding new destination
 
+
 export const addDestination_Domestic_Internationl = async (req, res) => {
   try {
-    const { destination_name, type } = req.body;
-    const titleImageUrl = req.file?.path || req.body.title_image || ''; // depends on your cloudinary middleware
+    const { destination_name, type, destination_type } = req.body;
+    const titleImageUrl = req.files;
+    console.log(titleImageUrl)
+    const titleImages = titleImageUrl ? titleImageUrl.map(file => file.path) : [];
+    console.log(titleImages);
 
+    // Check for empty fields
+    // ✅ Basic validation
     if (!destination_name || !type) {
       return res.status(400).json({ msg: 'All the fields are required', success: false });
     }
 
+    // Check for duplicates
+    // ✅ Check for duplicates
     const alreadyExists = await destinatinInternationAndDomestic.find({
       destination_name: formatCountryName(destination_name),
     });
@@ -50,19 +58,25 @@ export const addDestination_Domestic_Internationl = async (req, res) => {
       return res.status(409).json({ msg: 'The given destination already exists', success: false });
     }
 
+    // Create new destination
+    // ✅ Create new destination
     const newDestination = new destinatinInternationAndDomestic({
       domestic_or_international: formatCountryName(type),
       destination_name: formatCountryName(destination_name),
-      title_image: titleImageUrl, // store the Cloudinary URL here
+      title_image: titleImages, // store the Cloudinary URLs here
+      destination_type: Array.isArray(destination_type) ? destination_type : [destination_type], // ensure array
     });
 
     await newDestination.save();
+
     return res.status(200).json({ msg: 'Destination created successfully', success: true });
   } catch (error) {
     console.log(`Add Destination Error: ${error}`);
     return res.status(500).json({ msg: 'Server Error', success: false });
   }
 };
+
+
 
 export const deleteDestination_Domestic_Internationl = async (req, res) => {
   const { id } = req.params;
@@ -81,7 +95,7 @@ export const deleteDestination_Domestic_Internationl = async (req, res) => {
     return res.status(500).json({ msg: 'Server Error', success: false });
   }
 };
-export const getSingleDestinationBYId=async(req,res)=>{
+export const getSingleDestinationBYId = async (req, res) => {
   const { id } = req.params;
   try {
     if (!id) {
@@ -97,28 +111,45 @@ export const getSingleDestinationBYId=async(req,res)=>{
     return res.status(500).json({ msg: 'Server Error', success: false });
   }
 }
-  
+
 //This is the Latest Changes Which is Suggest by the client.
 export const updateDestination_Domestic_Internationl = async (req, res) => {
   const { id } = req.params;
-  const { destination_name, type } = req.body;
-  // console.log(req.body);
+  const { destination_name, type, destination_type } = req.body;
 
   try {
     if (!id) {
       return res.status(400).json({ msg: 'ID is required', success: false });
     }
-   
 
     const destination = await destinatinInternationAndDomestic.findById(id);
     if (!destination) {
       return res.status(404).json({ msg: 'Destination not found', success: false });
     }
-    const title_image = req.file ? req.file.path : destination.title_image;
 
-    destination.destination_name = formatCountryName(destination_name);
-    destination.domestic_or_international = formatCountryName(type);
-    destination.title_image = title_image; // Update the title_image field if provided
+    // ✅ Merge title_image if new images are uploaded
+    if (req.files && req.files.length > 0) {
+      const newImages = req.files.map(file => file.path);
+      destination.title_image = Array.from(
+        new Set([...(destination.title_image || []), ...newImages])
+      );
+    }
+
+    // ✅ Update basic fields
+    if (destination_name) {
+      destination.destination_name = formatCountryName(destination_name);
+    }
+    if (type) {
+      destination.domestic_or_international = formatCountryName(type);
+    }
+
+    // ✅ Merge destination_type values (remove duplicates)
+    if (destination_type) {
+      const newTypes = Array.isArray(destination_type)
+        ? destination_type
+        : [destination_type];
+      destination.destination_type =newTypes;
+    }
 
     await destination.save();
 
