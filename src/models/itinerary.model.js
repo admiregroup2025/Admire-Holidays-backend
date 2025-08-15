@@ -15,45 +15,45 @@ const itinerarySchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
 
     itinerary_visibility: {
       type: String,
       enum: ['public', 'private'],
-      required: true,
+      // required: true,
     },
     itinerary_type: {
       type: String,
       enum: ['fixed', 'flexible'],
-      required: true,
+      // required: true,
     },
     cancellation_policy: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     classification: {
       type: [String],
-      required: true,
+      // required: true,
     },
     days_information: {
       type: [dayInfoSchema],
-      required: true,
+      // required: true,
     },
     destination_detail: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     destination_images: {
       type: [String],
-      required: true,
+      // required: true,
     },
     destination_thumbnails: {
       type: [String],
-      required: true,
+      // required: true,
     },
     destination_video: {
       type: String, // Store the Cloudinary video URL
@@ -67,31 +67,31 @@ const itinerarySchema = new mongoose.Schema(
     },
     duration: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     exclusion: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     hotel_as_per_category: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     inclusion: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     itinerary_theme: {
       type: [String],
-      required: true,
+      // required: true,
     },
     payment_mode: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     pricing: {
@@ -124,7 +124,7 @@ const itinerarySchema = new mongoose.Schema(
     },
     terms_and_conditions: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
   },
@@ -133,5 +133,5 @@ const itinerarySchema = new mongoose.Schema(
   }
 );
 
-const itineraryModel=mongoose.model('ItineraryMain', itinerarySchema);
+const itineraryModel = mongoose.model('ItineraryMain', itinerarySchema);
 export default itineraryModel;

@@ -6,7 +6,7 @@ import destinationInternationalAndDomesticModel from '../models/destinationInter
 import imageGalleryModel from '../models/imageGallery.model.js';
 import { formatCountryName } from '../utils.js';
 
-
+  
 export const getImageGalleryByType = async (req, res) => {
   const { type } = req.params;
 

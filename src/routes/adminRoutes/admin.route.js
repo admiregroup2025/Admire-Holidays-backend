@@ -27,7 +27,7 @@ import {
   addDestination_Domestic_Internationl,
   getSingleDestinationBYId
 } from '../../controller/admin/destination.admin.controller.js';
-import {} from '../../controller/admin/destination.admin.controller.js';
+import { } from '../../controller/admin/destination.admin.controller.js';
 import { getTNC, TNC } from '../../controller/admin/termsAndCondition.admin.controller.js';
 import {
   getPaymentMethod,
@@ -54,9 +54,17 @@ import {
 
 import {
   getPlanYourJourney,
+  deletePlanYourJourney,
+  archivePalanYourJourney,
   getContact,
+  deleteContact,
+  archiveContact,
   getSubscribe,
+  deleteSubscribe,
+  archiveSubscribe,
   getSuggestions,
+  deleteSuggestions,
+  archiveSuggestions
 } from '../../controller/admin/leads.admin.controller.js';
 
 import {
@@ -95,7 +103,7 @@ adminRoute.delete('/image-Gallery/delete', auth, authorizeAdmin, deleteImageFrom
 
 // Destination Section
 adminRoute.get('/destination/:type', auth, destination_Internation_Or_Domestic);
-adminRoute.post('/new-destination', auth,uploadMedia.single('image'), addDestination_Domestic_Internationl);
+adminRoute.post('/new-destination', auth, uploadMedia.array('image'), addDestination_Domestic_Internationl);
 adminRoute.delete(
   '/destination/delete/:id',
   auth,
@@ -106,7 +114,7 @@ adminRoute.get('/destination/edit/:id', auth, getSingleDestinationBYId);
 adminRoute.patch(
   '/destination/:id',
   auth,
-  uploadMedia.single('image'),
+  uploadMedia.array('image'),
   updateDestination_Domestic_Internationl
 );
 adminRoute.post(
@@ -159,12 +167,20 @@ adminRoute.delete(
 
 // Leads Section
 adminRoute.get('/plan-your-journey', auth, getPlanYourJourney);
+adminRoute.delete('/plan-your-journey/:id', auth, authorizeAdmin, deletePlanYourJourney);
+adminRoute.patch('/plan-your-journey/archive/:id', auth, archivePalanYourJourney);
 adminRoute.get('/get-contact', auth, getContact);
+adminRoute.delete('/get-contact/:id', auth, authorizeAdmin, deleteContact);
+adminRoute.patch('/get-contact/archive/:id', auth, archiveContact);
 adminRoute.get('/get-subscribe', auth, getSubscribe);
+adminRoute.delete('/get-subscribe/:id', auth, authorizeAdmin, deleteSubscribe);
+adminRoute.patch('/get-subscribe/archive/:id', auth, archiveSubscribe);
 adminRoute.get('/get-suggestions', auth, getSuggestions);
+adminRoute.delete('/get-suggestions/:id', auth, authorizeAdmin, deleteSuggestions);
+adminRoute.patch('/get-suggestions/archive/:id', auth, archiveSuggestions);
+
 
 //Blog Section
-
 adminRoute.post('/blog', auth, uploadMedia.single('coverImage'), postBlog);
 adminRoute.get('/blog', auth, getBlog);
 adminRoute.get('/blog/:blogId', auth, getSingleBlog);
