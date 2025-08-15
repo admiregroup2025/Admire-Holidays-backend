@@ -6,6 +6,7 @@ import {
   contact,
   subscribe,
   suggestionComplain,
+  planYourTripController
 } from '../../controller/leads.controller.js';
 
 import {
@@ -13,6 +14,7 @@ import {
   planYourJourneyValidator,
   subscribeValidator,
   suggestionComplainValidator,
+  planYourTripValidator
 } from '../../validate/leads.validate.js';
 
 const leadsRoute = express.Router();
@@ -31,6 +33,7 @@ leadsRoute.post('/planYourJourney', planYourJourneyValidator, validate, planYour
 leadsRoute.post('/contact', contactValidator, validate, contact);
 leadsRoute.post('/subscribe', subscribeValidator, validate, subscribe);
 leadsRoute.post('/suggestionComplain', suggestionComplainValidator, validate, suggestionComplain);
+leadsRoute.post('/planYourTrip', planYourTripValidator, validate, planYourTripController);
 console.log("✅ leads.route.js loaded");
 
 

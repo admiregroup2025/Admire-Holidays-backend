@@ -32,7 +32,6 @@ export const destination_Internation_Or_Domestic = async (req, res) => {
 };
 
 //Adding new destination
-
 export const addDestination_Domestic_Internationl = async (req, res) => {
   try {
     const { destination_name, type } = req.body;
@@ -81,7 +80,7 @@ export const deleteDestination_Domestic_Internationl = async (req, res) => {
     return res.status(500).json({ msg: 'Server Error', success: false });
   }
 };
-export const getSingleDestinationBYId=async(req,res)=>{
+export const getSingleDestinationBYId = async (req, res) => {
   const { id } = req.params;
   try {
     if (!id) {
@@ -91,27 +90,26 @@ export const getSingleDestinationBYId=async(req,res)=>{
     if (!destination) {
       return res.status(404).json({ msg: 'Destination not found', success: false });
     }
-    return res.status(200).json({ msg: 'Destination fetched successfully', success: true, destination });
+    return res
+      .status(200)
+      .json({ msg: 'Destination fetched successfully', success: true, destination });
   } catch (error) {
     console.log(`Get Single Destination Error -> ${error}`);
     return res.status(500).json({ msg: 'Server Error', success: false });
   }
-}
-  
+};
+
 //This is the Latest Changes Which is Suggest by the client.
 export const updateDestination_Domestic_Internationl = async (req, res) => {
   const { id } = req.params;
   const { destination_name, type } = req.body;
   // console.log(req.body);
-
   try {
     if (!id) {
       return res.status(400).json({ msg: 'ID is required', success: false });
     }
-   
-
     const destination = await destinatinInternationAndDomestic.findById(id);
-    if (!destination) {
+    if (!destination){
       return res.status(404).json({ msg: 'Destination not found', success: false });
     }
     const title_image = req.file ? req.file.path : destination.title_image;

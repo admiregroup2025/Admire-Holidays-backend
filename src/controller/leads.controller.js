@@ -2,6 +2,7 @@ import PlanYourJourney from '../models/planYourJuorney.model.js';
 import contactModel from '../models/contact.model.js';
 import subscribeModel from '../models/subscribe.model.js';
 import suggestionComplainModel from '../models/suggestionComplain.model.js';
+import planYourTrip from '../models/planYourTrip.model.js';
 
 // planYourJourney controller
 export const planYourJourney = async (req, res) => {
@@ -32,7 +33,7 @@ export const planYourJourney = async (req, res) => {
 
 // conatct controller
 export const contact = async (req, res) => {
-  const { name, email,phone, subject, message } = req.body;
+  const { name, email, phone, subject, message } = req.body;
   // console.log(req.body)
   try {
     const newContcat = new contactModel({
@@ -40,7 +41,7 @@ export const contact = async (req, res) => {
       email,
       subject,
       message,
-      phone_no:phone
+      phone_no: phone,
     });
     await newContcat.save();
 
@@ -97,6 +98,53 @@ export const suggestionComplain = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
+      msg: 'Internal Server Error',
+      error: error.message,
+      success: false,
+    });
+  }
+};
+
+// planYourTrip controller
+
+export const planYourTripController = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      phone_no,
+      from,
+      to,
+      NumberodDays,
+      adults,
+      kids,
+      budget,
+      purpose,
+      consultation,
+    } = req.body;
+    console.log(req.body);
+    const newPlanYourTrip = new planYourTrip({
+      name,
+      email,
+      phone_no,
+      from,
+      to,
+      NumberodDays,
+      adults,
+      kids,
+      budget,
+      purpose,
+      consultation,
+    });
+    newPlanYourTrip.save();
+    res.status(201).json({
+      msg: 'Plan Your Trip request submitted successfully',
+      success: true,
+      data: newPlanYourTrip,
+    });
+  } catch (error) {
+    console.error('Error in planYourTripController:', error);
+    res.status(500).json({
       msg: 'Internal Server Error',
       error: error.message,
       success: false,
