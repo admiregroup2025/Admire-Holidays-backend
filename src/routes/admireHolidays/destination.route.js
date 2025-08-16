@@ -5,6 +5,7 @@ import {
   getSingleItineraryById,
   getExclusiveAndWeekendItinerary,
   getTrendingDestination,
+  domesticAndInternationForHome
   // getWeekendTrendingItineraries
 } from '../../controller/destination.controller.js';
 
@@ -14,6 +15,6 @@ destinationRoute.get('/itineraries/:place', getItineraryByDestinationId); // Fet
 destinationRoute.get('/itinerary/:id', getSingleItineraryById); // Fetch single itinerary by ID
 destinationRoute.get('/classified-itinerary', getExclusiveAndWeekendItinerary); // Fetch exclusive and weekend itineraries for home page
 destinationRoute.get('/home/trending-destination', getTrendingDestination); // Fetch trending destinations
-// destinationRoute.get('/weekend-trending-itineraries', getWeekendTrendingItineraries); // Fetch weekend trending itineraries
+destinationRoute.get('/home/DomesticAndInternational',domesticAndInternationForHome)
 
 export default destinationRoute;

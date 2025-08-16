@@ -1,8 +1,4 @@
 import itineraryModel from '../models/itinerary.model.js';
-
-import destinationDetailsAndImagesModel from '../models/destinationDetailsAndImage.model.js';
-import resortModel from '../models/resort.model.js';
-import destinationInternationalAndDomesticModel from '../models/destinationInternationAndDomestic.model.js';
 import imageGalleryModel from '../models/imageGallery.model.js';
 import { formatCountryName } from '../utils.js';
 import DestinationInternationAndDomesticModel from '../models/destinationInternationAndDomestic.model.js';
@@ -139,22 +135,38 @@ export const getTrendingDestination = async (req, res) => {
   }
 };
 
-// Weekend Trending Itineraries
-// export const getWeekendTrendingItineraries = async (req, res) => {
-//   try {
-//     const weekendTrendingItineraries = await itineraryModel.find({
-//       classification: { $regex: /^weekend$/i },
-//     }).populate('selected_destination');
+// International and Domestic Destination for Home page
+export const domesticAndInternationForHome = async (req, res) => {
+  try {
+    const [Domestic, International] = await Promise.all([
+      DestinationInternationAndDomesticModel.find({
+        domestic_or_international: { $regex: /^domestic$/i },
+      })
+        .sort({ createdAt: -1 })
+        .limit(10),
+      DestinationInternationAndDomesticModel.find({
+        domestic_or_international: { $regex: /^international$/i },
+      })
+        .sort({ createdAt: -1 })
+        .limit(10),
+    ]);
 
-//     if (!weekendTrendingItineraries || weekendTrendingItineraries.length === 0) {
-//       return res.status(404).json({ success: false, message: 'No weekend trending itineraries found' });
-//     }
+    if (!Domestic || Domestic.length == 0) {
+      return res.status(404).json({ message: 'The Domestic data are not present', success: false });
+    }
+    if (!International || International.length == 0) {
+      return res
+        .status(404)
+        .json({ message: 'The International data are not present', success: false });
+    }
 
-//     return res.status(200).json({ success: true, data: weekendTrendingItineraries });
-//   } catch (error) {
-//     console.error('Error in getWeekendTrendingItineraries:', error);
-//     res.status(500).json({ success: false, message: 'Server Error' });
-//   }
-// }
+    return res
+      .status(200)
+      .json({ message: 'Successfully fetched', success: true, data: { Domestic, International } });
+  } catch (error) {
+    console.error(`Error in geting Domestic and International:, ${error}`);
+    return res.status(500).json({ message: 'Server Error', success: false });
+  }
+};
 
-// Explore International and Domestic Destination by type for home page
+// 
