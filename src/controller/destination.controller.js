@@ -5,8 +5,8 @@ import resortModel from '../models/resort.model.js';
 import destinationInternationalAndDomesticModel from '../models/destinationInternationAndDomestic.model.js';
 import imageGalleryModel from '../models/imageGallery.model.js';
 import { formatCountryName } from '../utils.js';
+import DestinationInternationAndDomesticModel from '../models/destinationInternationAndDomestic.model.js';
 
-  
 export const getImageGalleryByType = async (req, res) => {
   const { type } = req.params;
 
@@ -67,10 +67,12 @@ export const getItineraryByDestinationId = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Destination ID is required' });
     }
 
-    const itineraries = await itineraryModel.find({
-      selected_destination: place,
-      itinerary_visibility: 'Public', 
-    }).populate('selected_destination');
+    const itineraries = await itineraryModel
+      .find({
+        selected_destination: place,
+        itinerary_visibility: 'Public',
+      })
+      .populate('selected_destination');
 
     if (!itineraries || itineraries.length === 0) {
       return res
@@ -85,18 +87,74 @@ export const getItineraryByDestinationId = async (req, res) => {
   }
 };
 
-
 export const getSingleItineraryById = async (req, res) => {
-  try{
-     const { id } = req.params;
-     const itinerary = await itineraryModel.findById(id).populate('selected_destination');
-     if(!itinerary) {
-       return res.status(404).json({ success: false, message: 'Itinerary not found' });
-     }
-     return res.status(200).json({ success: true, data: itinerary });
-  }
-  catch (error) {
+  try {
+    const { id } = req.params;
+    const itinerary = await itineraryModel.findById(id).populate('selected_destination');
+    if (!itinerary) {
+      return res.status(404).json({ success: false, message: 'Itinerary not found' });
+    }
+    return res.status(200).json({ success: true, data: itinerary });
+  } catch (error) {
     console.error('Error in getSingleItineraryById:', error);
     res.status(500).json({ success: false, message: 'Server Error' });
-}
-}
+  }
+};
+
+// Get Exclusive Itinerary
+export const getExclusiveAndWeekendItinerary = async (req, res) => {
+  try {
+    const [exclusiveItineraryData, weekendItineraryDetails] = await Promise.all([
+      itineraryModel
+        .find({ classification: { $regex: /^exclusive$/i } })
+        .populate('selected_destination'),
+      itineraryModel
+        .find({ classification: { $regex: /^weekend$/i } })
+        .populate('selected_destination'),
+    ]);
+    return res
+      .status(200)
+      .json({ success: true, data: { exclusiveItineraryData, weekendItineraryDetails } });
+  } catch (error) {
+    console.log('Error in getExclusiveItinerary:', error);
+    return res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
+// Trending Detsination
+export const getTrendingDestination = async (req, res) => {
+  try {
+    const trendingDestination = await DestinationInternationAndDomesticModel.find({
+      destination_type: { $all: [/^trending$/i, /^home$/i] },
+    })
+      .sort({ createdAt: -1 })
+      .limit(20);
+    if (!trendingDestination) {
+      return res.status(404).json({ success: false, message: 'No trending destination found' });
+    }
+    return res.status(200).json({ success: true, data: trendingDestination });
+  } catch (error) {
+    console.error('Error in getTrendingDestination:', error);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
+// Weekend Trending Itineraries
+// export const getWeekendTrendingItineraries = async (req, res) => {
+//   try {
+//     const weekendTrendingItineraries = await itineraryModel.find({
+//       classification: { $regex: /^weekend$/i },
+//     }).populate('selected_destination');
+
+//     if (!weekendTrendingItineraries || weekendTrendingItineraries.length === 0) {
+//       return res.status(404).json({ success: false, message: 'No weekend trending itineraries found' });
+//     }
+
+//     return res.status(200).json({ success: true, data: weekendTrendingItineraries });
+//   } catch (error) {
+//     console.error('Error in getWeekendTrendingItineraries:', error);
+//     res.status(500).json({ success: false, message: 'Server Error' });
+//   }
+// }
+
+// Explore International and Domestic Destination by type for home page

@@ -1,26 +1,23 @@
 import destinatinInternationAndDomestic from '../../models/destinationInternationAndDomestic.model.js';
 import { formatCountryName } from '../../utils.js';
 
-// For sendind name of place according to their type "Domestic/International"
+// For sending name of place according to their type "Domestic/International"
 export const destination_Internation_Or_Domestic = async (req, res) => {
   const { type } = req.params;
   try {
-    // console.log(type);
     if (!type) {
       return res.status(400).json({ msg: 'type is required', success: false });
     }
 
     const destinationType = await destinatinInternationAndDomestic
       .find({
-        domestic_or_international: { $regex: `^${type}$`, $options: 'i' }, // Case-insensitive match,
+        domestic_or_international: { $regex: `^${type}$`, $options: 'i' }, // Case-insensitive match
       })
       .sort({ destination_name: 1 });
-    // console.log(destinationType)
-    if (!destinationType || destinationType.length == 0) {
-      return res.status(409).json({ msg: 'destination type wontExists', success: false });
-    }
 
-    // console.log(destinationType);
+    if (!destinationType || destinationType.length === 0) {
+      return res.status(409).json({ msg: 'Destination type not found', success: false });
+    }
 
     return res
       .status(200)
@@ -31,26 +28,17 @@ export const destination_Internation_Or_Domestic = async (req, res) => {
   }
 };
 
-//Adding new destination
-
-
-
+// Adding new destination
 export const addDestination_Domestic_Internationl = async (req, res) => {
   try {
     const { destination_name, type, destination_type } = req.body;
     const titleImageUrl = req.files;
-    console.log(titleImageUrl)
     const titleImages = titleImageUrl ? titleImageUrl.map(file => file.path) : [];
-    console.log(titleImages);
 
-    // Check for empty fields
-    // ✅ Basic validation
     if (!destination_name || !type) {
       return res.status(400).json({ msg: 'All the fields are required', success: false });
     }
 
-    // Check for duplicates
-    // ✅ Check for duplicates
     const alreadyExists = await destinatinInternationAndDomestic.find({
       destination_name: formatCountryName(destination_name),
     });
@@ -59,13 +47,11 @@ export const addDestination_Domestic_Internationl = async (req, res) => {
       return res.status(409).json({ msg: 'The given destination already exists', success: false });
     }
 
-    // Create new destination
-    // ✅ Create new destination
     const newDestination = new destinatinInternationAndDomestic({
       domestic_or_international: formatCountryName(type),
       destination_name: formatCountryName(destination_name),
-      title_image: titleImages, // store the Cloudinary URLs here
-      destination_type: Array.isArray(destination_type) ? destination_type : [destination_type], // ensure array
+      title_image: titleImages,
+      destination_type: Array.isArray(destination_type) ? destination_type : [destination_type],
     });
 
     await newDestination.save();
@@ -77,8 +63,7 @@ export const addDestination_Domestic_Internationl = async (req, res) => {
   }
 };
 
-
-
+// Delete destination
 export const deleteDestination_Domestic_Internationl = async (req, res) => {
   const { id } = req.params;
   try {
@@ -96,6 +81,8 @@ export const deleteDestination_Domestic_Internationl = async (req, res) => {
     return res.status(500).json({ msg: 'Server Error', success: false });
   }
 };
+
+// Get single destination by ID
 export const getSingleDestinationBYId = async (req, res) => {
   const { id } = req.params;
   try {
@@ -113,14 +100,11 @@ export const getSingleDestinationBYId = async (req, res) => {
     console.log(`Get Single Destination Error -> ${error}`);
     return res.status(500).json({ msg: 'Server Error', success: false });
   }
+};
 
-
-//This is the Latest Changes Which is Suggest by the client.
+// Update destination
 export const updateDestination_Domestic_Internationl = async (req, res) => {
   const { id } = req.params;
-
-  // console.log(req.body);
-
   const { destination_name, type, destination_type } = req.body;
 
   try {
@@ -128,14 +112,12 @@ export const updateDestination_Domestic_Internationl = async (req, res) => {
       return res.status(400).json({ msg: 'ID is required', success: false });
     }
 
-
-
     const destination = await destinatinInternationAndDomestic.findById(id);
-    if (!destination){
+    if (!destination) {
       return res.status(404).json({ msg: 'Destination not found', success: false });
     }
 
-    // ✅ Merge title_image if new images are uploaded
+    // Merge title_image if new images are uploaded
     if (req.files && req.files.length > 0) {
       const newImages = req.files.map(file => file.path);
       destination.title_image = Array.from(
@@ -143,7 +125,7 @@ export const updateDestination_Domestic_Internationl = async (req, res) => {
       );
     }
 
-    // ✅ Update basic fields
+    // Update basic fields
     if (destination_name) {
       destination.destination_name = formatCountryName(destination_name);
     }
@@ -151,12 +133,11 @@ export const updateDestination_Domestic_Internationl = async (req, res) => {
       destination.domestic_or_international = formatCountryName(type);
     }
 
-    // ✅ Merge destination_type values (remove duplicates)
+    // Merge destination_type values
     if (destination_type) {
-      const newTypes = Array.isArray(destination_type)
+      destination.destination_type = Array.isArray(destination_type)
         ? destination_type
         : [destination_type];
-      destination.destination_type =newTypes;
     }
 
     await destination.save();
@@ -166,4 +147,4 @@ export const updateDestination_Domestic_Internationl = async (req, res) => {
     console.log(`Update Destination Error -> ${error}`);
     return res.status(500).json({ msg: 'Server Error', success: false });
   }
-}
+};
